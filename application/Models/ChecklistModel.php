@@ -25,5 +25,15 @@ class ChecklistModel {
         return $this->transactionBD->getResult('row');
     }
     
-    
+    public function findOnlyNoAnswered() {
+        $query = "SELECT *  
+                    FROM tab_genera_checkl a
+              INNER JOIN tab_catego_itemsx b ON a.cod_checkl = b.cod_checkl
+               LEFT JOIN tab_respon_checkl c ON b.cod_itemxx = c.cod_itemxx
+                   WHERE c.cod_itemxx IS NULL
+                     AND a.ind_estado = 'S' 
+                GROUP BY a.cod_checkl";
+        $this->transactionBD->doSelect($query);
+        return $this->transactionBD->getResult();
+    }
 }

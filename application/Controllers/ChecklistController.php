@@ -17,6 +17,10 @@ class ChecklistController extends BaseController {
         return $this->checklistModel->findById($id);
     }
     
+    public function getChecklistOnlyNoAnswered() {
+        return $this->checklistModel->findOnlyNoAnswered();
+    }
+    
     public function getAssociatedCategories($id) {
         return $this->categoryModel->findByChecklistId($id);
     }

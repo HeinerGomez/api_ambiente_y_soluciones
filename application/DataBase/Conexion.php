@@ -2,30 +2,33 @@
 
 namespace App\DataBase;
 
+use App\Helpers\DinamicGlobalConfig;
+
 abstract class Conexion {
     
-    protected static $conexion = null;
-
+    protected static $connection = null;
+    
     public static function singletonInstance() {
-        if (self::$conexion === null) {
-            $conexion = self::generateConexion();
-            return $conexion;
+        if (self::$connection === null) {
+            $connection = self::generateConnection();
+            return $connection;
         } else {
-            return $this->conexion;
+            return $this->connection;
         }
     }
     
-    private static function generateConexion() {
+    private static function generateConnection() {
         try {
-            $config = parse_ini_file('application/config/config.ini');
-            return new \PDO('mysql:dbname=' . $config['NAME_DB'] . ';host' . $config['HOST_DB'], $config['USER_DB'], $config['PWD_DB']);
+            $connectionParameters = DinamicGlobalConfig::getConfig('db');
+            return new \PDO('mysql:dbname=' . $connectionParameters['NAME_DB'] . ';host' . $connectionParameters['HOST_DB'], $connectionParameters['USER_DB'], $connectionParameters['PWD_DB']);
         } catch (Exception $ex) {
             echo "<pre>";
             print_r($ex->getMessage());
             echo "</pre>";
-        }
-        
+        } 
     }
     
-    
+    public static function destroyConnection() {
+        self::$connection = null;
+    }
 } 
