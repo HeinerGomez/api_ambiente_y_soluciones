@@ -10,12 +10,11 @@ class StandarConnection {
     private $transactionBD;
     
     public function __construct() {
-        $this->config = parse_ini_file('application/config/config.ini');
         $this->transactionBD = new TransactionBD();
     }   
     
     public function getDataOfClient($key) {
-        $query = "SELECT * FROM tab_config_appxxx WHERE id='{$key}' ";
+        $query = "SELECT * FROM tab_connect_apixxx WHERE cod_tokenx='{$key}' ";
         $this->transactionBD->doSelect($query);
         return $this->transactionBD->getResult('row');
     }

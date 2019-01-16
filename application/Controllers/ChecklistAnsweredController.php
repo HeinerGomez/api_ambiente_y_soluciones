@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 use App\Helpers\Response;
+use App\Helpers\DinamicGlobalConfig;
 
 class ChecklistAnsweredController extends BaseController {
 
@@ -17,7 +18,11 @@ class ChecklistAnsweredController extends BaseController {
         $informationOfFirm = $this->saveFirm($body);
         $data = $this->transformDataForSaveChecklistAnswered($body);
         foreach ($data as $_data) {
-            $this->checklistAnsweredModel->insertData($_data);
+            $_data['rut_photox'] = $informationOfPhotos;
+            $_data['rut_firmxx'] = $informationOfFirm;
+            if (!$this->checklistAnsweredModel->insertData($_data)) {
+                return false;
+            }
         }
         return true;
     }
@@ -99,7 +104,8 @@ class ChecklistAnsweredController extends BaseController {
                 // defino el nombre de la foto
                 $namePhoto = 'photo_' . $dateNow  . ".png";
                 // defino la ruta donde se guardará la imagen
-                $pathPhoto = "public/imgs/{$namePhoto}";
+                $basePath = DinamicGlobalConfig::getConfig('url_folderx');
+                $pathPhoto = "{$basePath}/{$namePhoto}";
                 // finalmente se crea la foto y se guarda la foto en una ruta dedicada para las imagenes
                 imagepng($realPhoto, $pathPhoto);
             } else {
@@ -127,7 +133,8 @@ class ChecklistAnsweredController extends BaseController {
                 // defino el nombre de la firma
                 $nameFirm = 'firm_' . $dateNow . ".png";
                 // defino la ruta en donde se guardará la imagen
-                $pathFirm = "public/imgs/{$nameFirm}";
+                $basePath = DinamicGlobalConfig::getConfig('url_folderx');
+                $pathFirm = "{$basePath}/{$nameFirm}";
                 // finalmente se crea la firma y se guarda la firma en una ruta dedicada para las imagenes
                 imagepng($realFirm, $pathFirm);
             } else {

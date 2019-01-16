@@ -14,11 +14,15 @@ class TransactionBD {
     }
 
     public function beginTransaction() {
-        $this->conexion->beginTransaction();
+        if ($this->conexion->inTransaction() !== true) {
+            $this->conexion->beginTransaction();
+        }
     }
 
     public function commit() {
-        $this->conexion->commit();
+        if ($this->conexion->inTransaction()) {
+            $this->conexion->commit();
+        }
     }
 
     public function doSelect($query, $associative = true) {
@@ -34,9 +38,15 @@ class TransactionBD {
             if ($this->conexion->exec($query)) {
                 return true;
             } else {
+                echo "<pre>--->";
+                print_r($this->conexion->errorInfo());
+                echo "</pre>";
                 return false;
             }
         } catch (PDOException $ex) {
+            echo "<pre>";
+            print_r($ex);
+            echo "</pre>";
             $response = ["error" => "La insercion ha fallado porque: " . $ex->getMessage()];
         }
     }

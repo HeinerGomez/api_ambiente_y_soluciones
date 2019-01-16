@@ -8,6 +8,7 @@ use App\Authorization\AuthorizationGuard;
 use App\Controllers\ChecklistController;
 use App\Controllers\ChecklistAnsweredController;
 use App\Models\UserModel;
+use App\Models\StandarConnection;
 use App\Helpers\Response;
 use App\Helpers\DinamicGlobalConfig;
 
@@ -16,9 +17,16 @@ abstract class Router {
     protected static $application;
 
     public static function registerRouter() {
+        self::$application = SlimApp::getInstance();
         $config = parse_ini_file('application/config/config.ini');
         DinamicGlobalConfig::registerConfig($config);
-        self::$application = SlimApp::getInstance();
+        $keyClient = self::$application->request->get('keyClient');
+        if ($keyClient == "" && isset($_REQUEST['keyClient'])) {
+            $keyClient = $_REQUEST['keyClient'];
+        }
+        $standar = new StandarConnection();
+        $dataOfClient = $standar->getDataOfClient($keyClient);
+        DinamicGlobalConfig::registerConfig($dataOfClient);
         // rutas para la checklist
         self::routesGroupForChecklist();
         // rutas para las respuestas a la checklist 
